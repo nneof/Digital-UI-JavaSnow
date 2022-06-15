@@ -8,7 +8,7 @@ export const gameProps = {
   id: "Game",
   size: {
     landscape: {
-      width: 600,
+      width: 850,
       height: 400,
       maxWidthMargin: 150,
     },
@@ -28,7 +28,7 @@ export const Game = makeSprite({
   init({ updateState, preloadFiles }) {
     preloadFiles({
       audioFileNames: ["boop.wav"],
-      imageFileNames: ["icon.png"],
+      imageFileNames: ["Namek.png", "goku.png", "playerLife.png"],
     }).then(() => {
       updateState((state) => ({ ...state, loaded: true }));
     });
@@ -64,7 +64,7 @@ export const Game = makeSprite({
     };
   },
 
-  render({ state }) {
+  render({ device, state }) {
     if (!state.loaded) {
       return [
         t.text({
@@ -74,18 +74,10 @@ export const Game = makeSprite({
       ];
     }
     return [
-      t.text({
-        color: "red",
-        text: "Hello Replay! To get started, edit src/index.js",
-        y: 50,
-      }),
       t.image({
-        testId: "icon",
-        x: state.posX,
-        y: state.posY,
-        fileName: "icon.png",
-        width: 50,
-        height: 50,
+        fileName: "Namek.png",
+        width: device.size.width,
+        height: device.size.height,
       }),
     ];
   },
