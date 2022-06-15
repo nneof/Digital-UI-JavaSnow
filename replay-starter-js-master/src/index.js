@@ -92,7 +92,7 @@ export const Game = makeSprite({
     let i= 0;
     let enemy,energyWave;
     const inputs  = getInputs();
-    let { player1, enemies, playerLifes} = state;
+    let { player1, enemies, playerLifes, energyWaves, isGameOver} = state;
 
     handleMusic(device,inputs);
 
@@ -117,10 +117,55 @@ export const Game = makeSprite({
       ),
     ];
     enemyHitWall(enemies, playerLifes);
+
+    if (inputs.keysJustPressed[" "]){
+      device.audio("boop.wav").play();
+      energyWave = createEnergyWave(player1,energyWaves);
+    }
+    if(energyWave != undefined){
+      energyWaves = [...energyWaves,energyWave];
+    }
+    if(energyWaves.length>0){
+      energyWaves[0].x += 5;
+    }
+
+    if(energyWaves.length > 0){
+      energyWaves = [...energyWaves.filter(
+        (energy) => energy.targetHit === false
+        )
+        .filter(
+          (energy) => energy.x < 400
+        ),
+      ];
+    }
+    if(playerLifesCounter >= 0){
+      if(playerLifesCounter === 0){
+        //isGameOver = true;
+      }
+      playerLifes = [...playerLifes.filter(
+        (life) => life.lifeHit === false
+        ),
+      ];
+    }
+
+    if (inputs.keysDown["ArrowUp"]) {
+      if (player1.y <= 150) {
+        player1.y += 5;
+      }
+    }
+    if (inputs.keysDown["ArrowDown"]) {
+      if (player1.y >= -150) {
+        player1.y -= 5;
+      }
+    }
+
     return {
       ...state,
       loaded: true,
       player1,
+      energyWaves,
+      playerLifes,
+      isGameOver,
       enemies,
     };
   },
@@ -148,6 +193,9 @@ export const Game = makeSprite({
       ...state.enemies.map(({ x, y, id }) =>
         Enemy({ x, y, id: "enemy" + id })
       ),
+      ...state.energyWaves.map(({ x, y, id}) =>
+        EnergyWave({x, y, id: "kamehameha" + id})
+      ),
       t.rectangle({
         height: device.size.height,
         x: -230,
@@ -169,6 +217,12 @@ function enemyHitWall(enemies, playerLifes){
       }
     }
   }
+}
+
+function createEnergyWave(player1,energyWaves){
+  wavesCount++;
+  if(energyWaves.length === 0)
+    return {x: -205, y: player1.y-5, id: wavesCount-1, targetHit: false, enemyHitWall: false};
 }
 
 function spawnEnemy(enemies) {
