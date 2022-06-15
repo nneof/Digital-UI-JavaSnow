@@ -12,6 +12,8 @@ let audioPlayingCounter=0;
 let wavesCount = 0;
 let muted = false;
 let playerLifesCounter = 4;
+let difficulty = 0;
+
 
 export const options = {
   dimensions: "scale-up",
@@ -22,7 +24,7 @@ export const gameProps = {
   size: {
     landscape: {
       width: 850,
-      height: 400,
+      height: 350,
       maxWidthMargin: 150,
     },
     portrait: {
@@ -104,11 +106,33 @@ export const Game = makeSprite({
       enemies = [...enemies, enemy];
     if(enemies.length > 0){
       for(i = 0; i < enemies.length; i++){
-        if(i == 0){
-        enemies[0].x += -1;
+        if(difficulty >= 1){
+          if(enemies[i].y >= 130){
+            enemies[i].directionY = 2;
+          }else if(enemies[i].y <= -130){
+            enemies[i].directionY = 1;
+          }
+          if(enemies[i].directionY === 1){
+            enemies[i].y += 1
+          }else if(enemies[i].directionY === 2){
+            enemies[i].y += -1;
+          }
+          if(difficulty === 2){
+            if(i == 0){
+              enemies[i].x += -1.5;
+            }
+            if(i > 0 && enemies[i-1].x < 250 ){
+              enemies[i].x += -1.5;
+            }
+          }
         }
-        if(i > 0 && enemies[i-1].x < 250 ){
-          enemies[i].x += -1;
+        if(difficulty <= 1){
+          if(i == 0){
+            enemies[i].x += -1;
+          }
+          if(i > 0 && enemies[i-1].x < 250 ){
+            enemies[i].x += -1;
+          }
         }
       }
     }
@@ -216,7 +240,15 @@ export const Game = makeSprite({
 function enemyHitWall(enemies, playerLifes){
   let i;
   for(i = 0; i < enemies.length; i++){
-    if(enemies[i].x === -222){
+    if(difficulty === 2){
+      if(enemies[i].x === -222.5){
+        enemies[i].enemyHitWall = true;
+        if(playerLifesCounter > 0){
+          playerLifes[playerLifesCounter-1].lifeHit = true;
+          playerLifesCounter--;
+        }
+      }
+    }else if(enemies[i].x === -222){
       enemies[i].enemyHitWall = true;
       if(playerLifesCounter > 0){
         playerLifes[playerLifesCounter-1].lifeHit = true;
@@ -236,15 +268,22 @@ function spawnEnemy(enemies) {
   const max = 150;
   const min = -150;
   const enemiesLength = enemies.length;
+  const initialY = Math.random() * (max - min) + min;
+  let direction;
+  if(initialY < 0){
+    direction = 1;
+  }else{
+    direction = 2;
+  }
   enemiesCount++;
   if (enemies.length == 0) { // add first enemy
-    return {x: 400, y: Math.random() * (max - min) + min, id: enemiesCount-1, targetHit: false, enemyHitWall: false};
+    return {x: 400, y: initialY, id: enemiesCount-1, targetHit: false, enemyHitWall: false, directionY: direction};
   }
   if(enemiesLength > 0 && enemies[enemiesLength-1].x < 250){
     if (enemiesCount % 2 != 0) { // lower 
-      return {x: 400, y: Math.random() * 150 * -1, id: enemiesCount-1, targetHit: false, enemyHitWall: false};
+      return {x: 400, y: Math.random() * 150 * -1, id: enemiesCount-1, targetHit: false, enemyHitWall: false, directionY: 1};
     } else {// upper
-      return {x: 400, y: Math.random() * 140, id: enemiesCount-1, targetHit: false, enemyHitWall: false};
+      return {x: 400, y: Math.random() * 140, id: enemiesCount-1, targetHit: false, enemyHitWall: false, directionY: 2};
     }
   }
 
