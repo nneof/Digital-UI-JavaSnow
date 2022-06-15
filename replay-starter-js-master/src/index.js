@@ -12,7 +12,8 @@ let audioPlayingCounter=0;
 let wavesCount = 0;
 let muted = false;
 let playerLifesCounter = 4;
-let difficulty = 0;
+let difficulty = 2;
+let wavesAvailable = -1;
 createButton();
 
 export const options = {
@@ -82,7 +83,7 @@ export const Game = makeSprite({
   init({ updateState, preloadFiles }) {
     preloadFiles({
       audioFileNames: ["boop.wav", "dbz-1.mp3", "naruto-kokuten.mp3"],
-      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png","game-over.PNG"],
+      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png","game-over.PNG", "kamehameha.png"],
     }).then(() => {
       updateState((state) => ({ ...state, loaded: true }));
     });
@@ -165,8 +166,11 @@ export const Game = makeSprite({
     if(energyWave != undefined){
       energyWaves = [...energyWaves,energyWave];
     }
-    if(energyWaves.length>0){
-      energyWaves[0].x += 5;
+    if(energyWaves.length > 0){
+      for(let i = 0; i < energyWaves.length; i++){
+        energyWaves[i].x += 5;
+      }
+      
     }
 
     if(energyWaves.length > 0){
@@ -180,6 +184,7 @@ export const Game = makeSprite({
     }
     if(playerLifesCounter >= 0){
       if(playerLifesCounter === 0){
+        device.audio(audioArray[audioPlayingCounter]).pause();
         isGameOver = true;
       }
       playerLifes = [...playerLifes.filter(
@@ -241,28 +246,28 @@ export const Game = makeSprite({
         y: state.player1.y,
       }),
       t.text({
-        font: { name: "Calibri", size: 12 },
+        font: { name: "Calibri", size: 12, style: "bold" },
         text: "Score:",
         color: "#000000",
         x: -device.size.width / 2 + 40,
         y: device.size.height / 2 - 20,
       }),
       t.text({
-        font: { name: "Calibri", size: 12 },
+        font: { name: "Calibri", size: 12, style: "bold" },
         text: state.player1.score,
         color: "#000000",
         x: -device.size.width / 2 + 40,
         y: device.size.height / 2 - 40,
       }),
       t.text({
-        font: { name: "Calibri", size: 12 },
+        font: { name: "Calibri", size: 12, style: "bold" },
         text: "Timer:",
         color: "#000000",
         x: -device.size.width / 2 + 150,
         y: device.size.height / 2 - 20,
       }),
       t.text({
-        font: { name: "Calibri", size: 12 },
+        font: { name: "Calibri", size: 12, style: "bold" },
         text: Math.trunc(state.player1.timer),
         color: "#000000",
         x: -device.size.width / 2 + 150,
@@ -291,14 +296,14 @@ function enemyHitWall(enemies, playerLifes){
   let i;
   for(i = 0; i < enemies.length; i++){
     if(difficulty === 2){
-      if(enemies[i].x === -211.5){
+      if(enemies[i].x <= -211.5){
         enemies[i].enemyHitWall = true;
         if(playerLifesCounter > 0){
           playerLifes[playerLifesCounter-1].lifeHit = true;
           playerLifesCounter--;
         }
       }
-    }else if(enemies[i].x === -211){
+    }else if(enemies[i].x <= -211){
       enemies[i].enemyHitWall = true;
       if(playerLifesCounter > 0){
         playerLifes[playerLifesCounter-1].lifeHit = true;
@@ -310,7 +315,14 @@ function enemyHitWall(enemies, playerLifes){
 
 function createEnergyWave(player1,energyWaves){
   wavesCount++;
-  if(energyWaves.length === 0)
+  if(difficulty === 0){
+    wavesAvailable = 1;
+  }else if(difficulty === 1){
+    wavesAvailable = 2;
+  }else{
+    wavesAvailable = 3;
+  }
+  if(energyWaves.length < wavesAvailable)
     return {x: -205, y: player1.y-5, id: wavesCount-1, targetHit: false, enemyHitWall: false};
 }
 
@@ -389,7 +401,7 @@ function didWaveHitTarget(energyWaves, enemies, player1){
     for(i = 0; i < enemies.length; i++){
       let enemyTop = enemies[i].y + enemyHeight/2;
       let enemyBottom = enemies[i].y - enemyHeight/2;
-      if(energyX > enemies[i].x && ((energyBottom < enemyTop && energyBottom > enemyBottom-10 ) || (energyTop > enemyBottom && energyTop < enemyTop))){ //&& energyY > enemyBottom && energyY < enemyTop){
+      if(energyX > enemies[i].x && ((energyBottom < enemyTop -12 && energyBottom > enemyBottom-10 ) || (energyTop > enemyBottom + 5 && energyTop < enemyTop))){ //&& energyY > enemyBottom && energyY < enemyTop){
         energyWaves[0].targetHit = true;
         enemies[i].targetHit = true;
         activateNumber(Math.trunc(Math.random() * 10));
