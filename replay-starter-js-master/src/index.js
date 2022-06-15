@@ -204,6 +204,16 @@ export const Game = makeSprite({
       ];
     }
 
+    if(inputs.keysDown["1"]){
+      difficulty = 0;
+    }
+    if(inputs.keysDown["2"]){
+      difficulty = 1;
+    }
+    if(inputs.keysDown["3"]){
+      difficulty = 2;
+    }
+
     if (inputs.keysDown["ArrowUp"]) {
       if (player1.y <= 150) {
         player1.y += 5;
