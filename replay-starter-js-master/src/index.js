@@ -315,12 +315,10 @@ function enemyHitWall(enemies, playerLifes){
 
 function createEnergyWave(player1,energyWaves){
   wavesCount++;
-  if(difficulty === 0){
+  if(difficulty === 0 || difficulty === 1){
     wavesAvailable = 1;
-  }else if(difficulty === 1){
-    wavesAvailable = 2;
   }else{
-    wavesAvailable = 3;
+    wavesAvailable = 2;
   }
   if(energyWaves.length < wavesAvailable)
     return {x: -215, y: player1.y-5, id: wavesCount-1, targetHit: false, enemyHitWall: false};
