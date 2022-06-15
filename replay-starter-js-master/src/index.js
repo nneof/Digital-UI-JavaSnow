@@ -12,8 +12,8 @@ let audioPlayingCounter=0;
 let wavesCount = 0;
 let muted = false;
 let playerLifesCounter = 4;
-let difficulty = 2;
-
+let difficulty = 0;
+createButton();
 
 export const options = {
   dimensions: "scale-up",
@@ -82,7 +82,7 @@ export const Game = makeSprite({
   init({ updateState, preloadFiles }) {
     preloadFiles({
       audioFileNames: ["boop.wav", "dbz-1.mp3", "naruto-kokuten.mp3"],
-      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png"],
+      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png","game-over.PNG"],
     }).then(() => {
       updateState((state) => ({ ...state, loaded: true }));
     });
@@ -180,7 +180,7 @@ export const Game = makeSprite({
     }
     if(playerLifesCounter >= 0){
       if(playerLifesCounter === 0){
-        //isGameOver = true;
+        isGameOver = true;
       }
       playerLifes = [...playerLifes.filter(
         (life) => life.lifeHit === false
@@ -217,6 +217,16 @@ export const Game = makeSprite({
           text: "Loading...",
           color: "black",
         }),
+      ];
+    }
+    if(state.isGameOver) {
+      return [
+        t.image({
+          fileName: "game-over.PNG",
+          width: device.size.width,
+          height: device.size.height,
+        }),
+        document.getElementById("gameOver").style.display = 'block'
       ];
     }
     return [
@@ -355,6 +365,19 @@ function handleMusic(device, inputs){
     device.audio(audioArray[audioPlayingCounter]).play();
     muted = false;
   }
+}
+
+function createButton(){
+  let btn = document.createElement("button");
+  btn.innerHTML = "Play Again";
+  btn.style.background = 'red';
+  btn.style.display = 'none';
+  btn.style.color = 'white';
+  btn.id = "gameOver";
+  btn.onclick = function () {
+    location.reload();
+  }
+  document.body.appendChild(btn);
 }
 
 function didWaveHitTarget(energyWaves, enemies, player1){
