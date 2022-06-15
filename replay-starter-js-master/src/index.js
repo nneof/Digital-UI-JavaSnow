@@ -117,6 +117,7 @@ export const Game = makeSprite({
       ),
     ];
     enemyHitWall(enemies, playerLifes);
+    didWaveHitTarget(energyWaves,enemies);
 
     if (inputs.keysJustPressed[" "]){
       device.audio("boop.wav").play();
@@ -269,4 +270,23 @@ function handleMusic(device, inputs){
     device.audio(audioArray[audioPlayingCounter]).play();
     muted = false;
   }
+}
+
+function didWaveHitTarget(energyWaves, enemies){
+  if(energyWaves.length > 0) {
+    let energyX = energyWaves[0].x;
+    let energyTop = energyWaves[0].y + energyHeight/2;
+    let energyBottom = energyWaves[0].y - energyHeight/2;
+    let i = 0;
+    for(i = 0; i < enemies.length; i++){
+      let enemyTop = enemies[i].y + enemyHeight/2;
+      let enemyBottom = enemies[i].y - enemyHeight/2;
+      if(energyX > enemies[i].x && ((energyBottom < enemyTop && energyBottom > enemyBottom-10 ) || (energyTop > enemyBottom && energyTop < enemyTop))){ //&& energyY > enemyBottom && energyY < enemyTop){
+        energyWaves[0].targetHit = true;
+        enemies[i].targetHit = true;
+        activateNumber(Math.trunc(Math.random() * 10));        
+      }
+    }
+  }
+  
 }
