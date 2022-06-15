@@ -78,8 +78,8 @@ const initialState = {
 export const Game = makeSprite({
   init({ updateState, preloadFiles }) {
     preloadFiles({
-      audioFileNames: ["boop.wav"],
-      imageFileNames: ["Namek.png", "goku.png", "playerLife.png"],
+      audioFileNames: ["boop.wav", "dbz-1.mp3", "naruto-kokuten.mp3"],
+      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png"],
     }).then(() => {
       updateState((state) => ({ ...state, loaded: true }));
     });
@@ -93,6 +93,8 @@ export const Game = makeSprite({
     let enemy,energyWave;
     const inputs  = getInputs();
     let { player1, enemies} = state;
+
+    handleMusic(device,inputs);
 
     enemy = spawnEnemy(enemies);
     if (enemy != undefined)
@@ -166,3 +168,31 @@ function spawnEnemy(enemies) {
   }
 
 };
+
+function handleMusic(device, inputs){
+  if(device.audio(audioArray[audioPlayingCounter]).getStatus()!=="playing" && !musicStarted){
+    device.audio(audioArray[audioPlayingCounter]).play();
+    musicStarted = true;
+  }/*else if(device.audio(audioArray[audioPlayingCounter]).getPosition() === device.audio(audioArray[audioPlayingCounter]).getDuration()){
+    if(audioPlayingCounter < audioArray.length){
+      audioPlayingCounter++;
+    }
+  }*/
+  if(inputs.keysJustPressed["+"]){
+    device.audio(audioArray[audioPlayingCounter]).pause();
+    audioPlayingCounter++;
+    device.audio(audioArray[audioPlayingCounter]).play();
+  }
+  if(inputs.keysJustPressed["-"]){
+    device.audio(audioArray[audioPlayingCounter]).pause();
+    audioPlayingCounter--;
+    device.audio(audioArray[audioPlayingCounter]).play();
+  }
+  if(!muted && inputs.keysJustPressed["m"]){
+    device.audio(audioArray[audioPlayingCounter]).pause();
+    muted = true;
+  }else if(muted && inputs.keysJustPressed["m"]){
+    device.audio(audioArray[audioPlayingCounter]).play();
+    muted = false;
+  }
+}
