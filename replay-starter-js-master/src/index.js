@@ -6,7 +6,6 @@ import { Enemy, enemyHeight, enemyWidth} from "./enemy";
 import { EnergyWave, energyHeight, energyWidth } from "./energyWave";
 
 let musicStarted = false;
-let enableStart = false;
 let enemiesCount = 0;
 const audioArray = ["dbz-1.mp3", "naruto-kokuten.mp3"];
 let audioPlayingCounter=0;
@@ -87,7 +86,8 @@ export const Game = makeSprite({
       audioFileNames: ["boop.wav", "dbz-1.mp3", "naruto-kokuten.mp3"],
       imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png","game-over.PNG", "kamehameha.png"],
     }).then(() => {
-      if(enableStart) {
+      if(document.getElementById("startGame").getAttribute("clicked") == "true") {
+        console.log("clicked == true")
         updateState((state) => ({...state, loaded: true}));
       }else {
         updateState((state) => ({...state, loaded: false}));
@@ -237,7 +237,6 @@ export const Game = makeSprite({
   },
 
   render({ device, state }) {
-    console.log(state.loaded)
     if (!state.loaded) {
       return [
         t.text({
@@ -417,9 +416,10 @@ function createButton(){
   startGame.style.display = 'block';
   startGame.style.color = 'white';
   startGame.id = "startGame";
+  startGame.setAttribute("clicked", "false");
   startGame.onclick = function () {
     document.getElementById("startGame").style.display = 'none';
-    enableStart = true;
+    document.getElementById("startGame").setAttribute("clicked", "true");
   }
   document.body.appendChild(startGame);
 }
