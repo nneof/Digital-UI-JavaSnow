@@ -92,7 +92,7 @@ export const Game = makeSprite({
     let i= 0;
     let enemy,energyWave;
     const inputs  = getInputs();
-    let { player1, enemies} = state;
+    let { player1, enemies, playerLifes} = state;
 
     handleMusic(device,inputs);
 
@@ -109,7 +109,14 @@ export const Game = makeSprite({
         }
       }
     }
-
+    enemies = [...enemies.filter(
+      (enemy) => enemy.targetHit === false
+      )
+      .filter(
+        (enemy) => !enemy.enemyHitWall
+      ),
+    ];
+    enemyHitWall(enemies, playerLifes);
     return {
       ...state,
       loaded: true,
@@ -150,6 +157,19 @@ export const Game = makeSprite({
     ];
   },
 });
+
+function enemyHitWall(enemies, playerLifes){
+  let i;
+  for(i = 0; i < enemies.length; i++){
+    if(enemies[i].x === -222){
+      enemies[i].enemyHitWall = true;
+      if(playerLifesCounter > 0){
+        playerLifes[playerLifesCounter-1].lifeHit = true;
+        playerLifesCounter--;
+      }
+    }
+  }
+}
 
 function spawnEnemy(enemies) {
   const max = 150;
