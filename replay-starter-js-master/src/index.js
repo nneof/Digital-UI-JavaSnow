@@ -323,7 +323,7 @@ function createEnergyWave(player1,energyWaves){
     wavesAvailable = 3;
   }
   if(energyWaves.length < wavesAvailable)
-    return {x: -205, y: player1.y-5, id: wavesCount-1, targetHit: false, enemyHitWall: false};
+    return {x: -215, y: player1.y-5, id: wavesCount-1, targetHit: false, enemyHitWall: false};
 }
 
 function spawnEnemy(enemies) {
@@ -394,18 +394,20 @@ function createButton(){
 
 function didWaveHitTarget(energyWaves, enemies, player1){
   if(energyWaves.length > 0) {
-    let energyX = energyWaves[0].x;
-    let energyTop = energyWaves[0].y + energyHeight/2;
-    let energyBottom = energyWaves[0].y - energyHeight/2;
-    let i = 0;
-    for(i = 0; i < enemies.length; i++){
-      let enemyTop = enemies[i].y + enemyHeight/2;
-      let enemyBottom = enemies[i].y - enemyHeight/2;
-      if(energyX > enemies[i].x && ((energyBottom < enemyTop -12 && energyBottom > enemyBottom-10 ) || (energyTop > enemyBottom + 5 && energyTop < enemyTop))){ //&& energyY > enemyBottom && energyY < enemyTop){
-        energyWaves[0].targetHit = true;
-        enemies[i].targetHit = true;
-        activateNumber(Math.trunc(Math.random() * 10));
-        player1.score++;        
+    for(let j = 0; j < energyWaves.length; j++){
+      let energyX = energyWaves[j].x;
+      let energyTop = energyWaves[j].y + energyHeight/2;
+      let energyBottom = energyWaves[j].y - energyHeight/2;
+      let i = 0;
+      for(i = 0; i < enemies.length; i++){
+        let enemyTop = enemies[i].y + enemyHeight/2;
+        let enemyBottom = enemies[i].y - enemyHeight/2;
+        if((energyX + energyWidth/2 >= enemies[i].x && energyX - energyWidth/2 <= enemies[i].x)  && ((energyBottom < enemyTop - 9 && energyBottom > enemyBottom-10 ) || (energyTop > enemyBottom + 5 && energyTop < enemyTop))){ //&& energyY > enemyBottom && energyY < enemyTop){
+          energyWaves[0].targetHit = true;
+          enemies[i].targetHit = true;
+          activateNumber(Math.trunc(Math.random() * 10));
+          player1.score++;        
+        }
       }
     }
   }
