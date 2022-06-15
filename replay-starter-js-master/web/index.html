@@ -41,17 +41,28 @@
       display: linear;
     }
 
+    .equationImage {
+      position: absolute;
+      width: 7%;
+      padding-left: 25%;
+      padding-top: 0.5%;
+    }
+
     .abd {
       display: linear;
       float: left;
     }
 
     .rules {
+      padding-left: 0.5%;
+      padding-top: 0.5%;
       margin: auto;
       float: left;
       width: 33%;
       height: 100px;
+      font-size: 20px;
     }
+
   </style>
 </head>
 
@@ -76,15 +87,18 @@
       <div id="9" class="num" onclick="clickNumber(9)">9</div>
     </div>
     <div class="numbers">
-      <div class="equation">
-        <b class="abd">Equation: </b>
-        <div id="firstElement" class="abd">__</div>
-        <div id="operator" class="abd">+</div>
-        <div id="secondElement" class="abd"> __</div>
-        <div class="abd">=</div>
-        <div id="result" class="abd">10</div>
+      <div>
+        <div class="equation">
+          <b class="abd">Equation: </b>
+          <div id="firstElement" class="abd">__</div>
+          <div id="operator" class="abd">+</div>
+          <div id="secondElement" class="abd"> __ </div>
+          <div class="abd">= </div>
+          <div id="result" class="abd">10</div>
+        </div>
+        <img id="wrong" src="wrong.png" alt="Italian Trulli" class="equationImage" hidden>
+        <img id="roshi" src="master-roshi.jpg" alt="Italian Trulli" class="equationImage" hidden>
       </div>
-
     </div>
   </div>
 </body>
@@ -95,7 +109,7 @@
       document.getElementById(value).style.backgroundColor = "green";
     } else {
       var count = 0;
-      while (document.getElementById(value).style.backgroundColor == "green" && count < 10) {
+      while (document.getElementById(value).style.backgroundColor == "green" && count < 30) {
         value = Math.trunc(Math.random() * 10);
         count++;
       }
@@ -111,12 +125,12 @@
       } else {
         document.getElementById("secondElement").textContent = value;
         checkEquation(document.getElementById("firstElement").textContent, document.getElementById("secondElement").textContent, document.getElementById("result").textContent, document.getElementById("operator").textContent);
-        generateNewEquation();
       }
     }
   }
 
   function checkEquation(x, y, z, operator) {
+    cleanElements();
     if (operator == "+") {
       if (parseInt(x) + parseInt(y) == parseInt(z)) {
         correct();
@@ -141,39 +155,51 @@
       } else {
         notCorrect();
       }
-    } 
+    }
   }
 
-  function generateNewEquation() {
-    let rand = Math.trunc(Math.random() * 4);
-    if (rand == 0) {
-      document.getElementById("operator").textContent = "+";
-      let res = Math.trunc(Math.random() * 18);
-      document.getElementById("result").textContent = res;
-    } else if (rand == 1) {
-      document.getElementById("operator").textContent = "-";
-      let res = Math.trunc(Math.random() * 9) + 1;
-      document.getElementById("result").textContent = res;
-    } else if (rand == 2) {
-      document.getElementById("operator").textContent = "*";
-      let res = Math.trunc(Math.random() * 30);
-      document.getElementById("result").textContent = res;
-    } else if (rand == 3) {
-      document.getElementById("operator").textContent = "/";
-      let res = Math.trunc(Math.random() * 10);
-      document.getElementById("result").textContent = res;
-    }
+  function cleanElements() {
     document.getElementById("firstElement").textContent = "__";
     document.getElementById("secondElement").textContent = "__";
   }
 
-  function correct() {
-    console.log("correct");
+  function generateNewEquation() {
+    let rand = Math.trunc(Math.random() * 4);
+    if (rand == 0) { // + range [1-18]
+      document.getElementById("operator").textContent = "+";
+      let res = Math.trunc(Math.random() * 17) + 1;
+      document.getElementById("result").textContent = res;
+    } else if (rand == 1) { // - range [1-9]
+      document.getElementById("operator").textContent = "-";
+      let res = Math.trunc(Math.random() * 9) + 1;
+      document.getElementById("result").textContent = res;
+    } else if (rand == 2) { 
+      let results = [2,3,4,5,6,7,8,9,10,12,14,15,18,20,21,24,27,28,30]
+      document.getElementById("operator").textContent = "*";
+      let res = Math.trunc(Math.random() * 20);
+      document.getElementById("result").textContent = results[res];
+    } else if (rand == 3) { // / range [1-9]
+      document.getElementById("operator").textContent = "/";
+      let res = Math.trunc(Math.random() * 9) + 1;
+      document.getElementById("result").textContent = res;
+    }
   }
 
-  function notCorrect() {
-    console.log("not correct");
+  async function correct() {
+    generateNewEquation();
+    var x = document.getElementById("roshi");
+    x.hidden = false;
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    x.hidden = true;
   }
+
+  async function notCorrect() {
+    var x = document.getElementById("wrong");
+    x.hidden = false;
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    x.hidden = true;
+  }
+
 </script>
 
 </html>
