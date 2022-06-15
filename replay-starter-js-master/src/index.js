@@ -169,8 +169,8 @@ export const Game = makeSprite({
                 (enemy) => !enemy.enemyHitWall
             ),
         ];
-        enemyHitWall(enemies, playerLifes);
-        didWaveHitTarget(energyWaves, enemies, player1);
+        enemyHitWall(enemies, playerLifes, device);
+        didWaveHitTarget(energyWaves, enemies, player1, device);
 
         if (inputs.keysJustPressed[" "]) {
             device.audio("boop.wav").play();
@@ -339,11 +339,12 @@ export const Game = makeSprite({
     },
 });
 
-function enemyHitWall(enemies, playerLifes) {
+function enemyHitWall(enemies, playerLifes, device) {
     let i;
     for (i = 0; i < enemies.length; i++) {
         if (difficulty === 2) {
             if (enemies[i].x <= -211.5) {
+                device.audio("explosion.wav").play();
                 enemies[i].enemyHitWall = true;
                 if (playerLifesCounter > 0) {
                     playerLifes[playerLifesCounter - 1].lifeHit = true;
@@ -351,6 +352,7 @@ function enemyHitWall(enemies, playerLifes) {
                 }
             }
         } else if (enemies[i].x <= -211) {
+            device.audio("explosion.wav").play();
             enemies[i].enemyHitWall = true;
             if (playerLifesCounter > 0) {
                 playerLifes[playerLifesCounter - 1].lifeHit = true;
@@ -485,7 +487,7 @@ function createTimer() {
     document.body.appendChild(playerTimer);
 }
 
-function didWaveHitTarget(energyWaves, enemies, player1) {
+function didWaveHitTarget(energyWaves, enemies, player1, device) {
     if (energyWaves.length > 0) {
         for (let j = 0; j < energyWaves.length; j++) {
             let energyX = energyWaves[j].x;
@@ -496,6 +498,7 @@ function didWaveHitTarget(energyWaves, enemies, player1) {
                 let enemyTop = enemies[i].y + enemyHeight / 2;
                 let enemyBottom = enemies[i].y - enemyHeight / 2;
                 if ((energyX + energyWidth / 2 >= enemies[i].x && energyX - energyWidth / 2 <= enemies[i].x) && ((energyBottom < enemyTop - 9 && energyBottom > enemyBottom - 10) || (energyTop > enemyBottom + 5 && energyTop < enemyTop))) { //&& energyY > enemyBottom && energyY < enemyTop){
+                    device.audio("explosion.wav").play();
                     energyWaves[0].targetHit = true;
                     enemies[i].targetHit = true;
                     activateNumber(Math.trunc(Math.random() * 10));
