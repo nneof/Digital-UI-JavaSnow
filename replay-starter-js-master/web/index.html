@@ -1,20 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Replay Starter</title>
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .interactionMenu {
+      border: 3px solid;
+      font: 1em sans-serif;
+      height: 100px;
+      background-color: lightblue;
+    }
+
+    .numbers {
+      margin: auto;
+      width: 33%;
+      height: 100px;
+      display: inline;
+    }
+
+    .num {
+      float: left;
+      border: 3px solid;
+      padding-left: 5px;
+      padding-right: 5px;
+      font-size: 80px;
+      display: inline;
+      background-color: grey;
+      color: lightgrey;
+    }
+
+    .equation {
+      padding-top: 25px;
+      font-size: 45px;
+      margin: auto;
+      float: right;
+      width: 33%;
+      height: 100px;
+      display: linear;
+    }
+
+    .abd {
+      display: linear;
+      float: left;
+    }
+
+    .rules {
+      margin: auto;
+      float: left;
+      width: 33%;
+      height: 100px;
     }
   </style>
 </head>
+
 <body>
+  <div class="interactionMenu">
+    <div class="numbers">
+      <div class="rules">
+        <div>Dont let the enemies reach your base!</div>
+        <div>Solve the equation before the timer runs out!</div>
+      </div>
+    </div>
+    <div class="numbers">
+      <div id="0" class="num" onclick="clickNumber(0)">0</div>
+      <div id="1" class="num" onclick="clickNumber(1)">1</div>
+      <div id="2" class="num" onclick="clickNumber(2)">2</div>
+      <div id="3" class="num" onclick="clickNumber(3)">3</div>
+      <div id="4" class="num" onclick="clickNumber(4)">4</div>
+      <div id="5" class="num" onclick="clickNumber(5)">5</div>
+      <div id="6" class="num" onclick="clickNumber(6)">6</div>
+      <div id="7" class="num" onclick="clickNumber(7)">7</div>
+      <div id="8" class="num" onclick="clickNumber(8)">8</div>
+      <div id="9" class="num" onclick="clickNumber(9)">9</div>
+    </div>
+    <div class="numbers">
+      <div class="equation">
+        <b class="abd">Equation: </b>
+        <div id="firstElement" class="abd">__</div>
+        <div id="operator" class="abd">+</div>
+        <div id="secondElement" class="abd"> __</div>
+        <div class="abd">=</div>
+        <div id="result" class="abd">10</div>
+      </div>
+
+    </div>
+  </div>
 </body>
+<script>
+
+  function activateNumber(value) {
+    if (document.getElementById(value).style.backgroundColor == "" || document.getElementById(value).style.backgroundColor == "grey") {
+      document.getElementById(value).style.backgroundColor = "green";
+    } else {
+      var count = 0;
+      while (document.getElementById(value).style.backgroundColor == "green" && count < 10) {
+        value = Math.trunc(Math.random() * 10);
+        count++;
+      }
+      document.getElementById(value).style.backgroundColor = "green";
+    }
+  }
+
+  function clickNumber(value) {
+    if (document.getElementById(value).style.backgroundColor == "green") {
+      document.getElementById(value).style.backgroundColor = "grey";
+      if (document.getElementById("firstElement").textContent == "__") {
+        document.getElementById("firstElement").textContent = value;
+      } else {
+        document.getElementById("secondElement").textContent = value;
+        checkEquation(document.getElementById("firstElement").textContent, document.getElementById("secondElement").textContent, document.getElementById("result").textContent, document.getElementById("operator").textContent);
+        generateNewEquation();
+      }
+    }
+  }
+
+  function checkEquation(x, y, z, operator) {
+    if (operator == "+") {
+      if (parseInt(x) + parseInt(y) == parseInt(z)) {
+        correct();
+      } else {
+        notCorrect();
+      }
+    } else if (operator == "-") {
+      if (parseInt(x) - parseInt(y) == parseInt(z)) {
+        correct();
+      } else {
+        notCorrect();
+      }
+    } else if (operator == "*") {
+      if (parseInt(x) * parseInt(y) == parseInt(z)) {
+        correct();
+      } else {
+        notCorrect();
+      }
+    } else if (operator == "/") {
+      if (parseInt(x) / parseInt(y) == parseInt(z)) {
+        correct();
+      } else {
+        notCorrect();
+      }
+    } 
+  }
+
+  function generateNewEquation() {
+    let rand = Math.trunc(Math.random() * 4);
+    if (rand == 0) {
+      document.getElementById("operator").textContent = "+";
+      let res = Math.trunc(Math.random() * 18);
+      document.getElementById("result").textContent = res;
+    } else if (rand == 1) {
+      document.getElementById("operator").textContent = "-";
+      let res = Math.trunc(Math.random() * 9) + 1;
+      document.getElementById("result").textContent = res;
+    } else if (rand == 2) {
+      document.getElementById("operator").textContent = "*";
+      let res = Math.trunc(Math.random() * 30);
+      document.getElementById("result").textContent = res;
+    } else if (rand == 3) {
+      document.getElementById("operator").textContent = "/";
+      let res = Math.trunc(Math.random() * 10);
+      document.getElementById("result").textContent = res;
+    }
+    document.getElementById("firstElement").textContent = "__";
+    document.getElementById("secondElement").textContent = "__";
+  }
+
+  function correct() {
+    console.log("correct");
+  }
+
+  function notCorrect() {
+    console.log("not correct");
+  }
+</script>
+
 </html>

@@ -33,7 +33,7 @@ export const gameProps = {
   },
   defaultFont: {
     family: "Courier",
-    size: 10,
+    size: 30,
   },
 };
 const initialState = {
@@ -93,6 +93,9 @@ export const Game = makeSprite({
     let enemy,energyWave;
     const inputs  = getInputs();
     let { player1, enemies, playerLifes, energyWaves, isGameOver} = state;
+
+    if (!state.loaded) return state;
+    if (isGameOver) return;
 
     handleMusic(device,inputs);
 
@@ -191,6 +194,9 @@ export const Game = makeSprite({
         x: state.player1.x,
         y: state.player1.y,
       }),
+      ...state.playerLifes.map(({ x, y, id }) =>
+        PlayerLife({ x, y, id: "life" + id })
+      ),
       ...state.enemies.map(({ x, y, id }) =>
         Enemy({ x, y, id: "enemy" + id })
       ),
