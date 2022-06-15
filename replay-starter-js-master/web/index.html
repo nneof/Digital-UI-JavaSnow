@@ -190,6 +190,7 @@
     var x = document.getElementById("roshi");
     x.hidden = false;
     await new Promise(resolve => setTimeout(resolve, 2000));
+    document.getElementById("playerTimer").setAttribute("reset", "true");
     x.hidden = true;
   }
 

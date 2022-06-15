@@ -6,6 +6,7 @@ import { Enemy, enemyHeight, enemyWidth} from "./enemy";
 import { EnergyWave, energyHeight, energyWidth } from "./energyWave";
 
 let musicStarted = false;
+let enableStart = false;
 let enemiesCount = 0;
 const audioArray = ["dbz-1.mp3", "naruto-kokuten.mp3"];
 let audioPlayingCounter=0;
@@ -15,6 +16,7 @@ let playerLifesCounter = 4;
 let difficulty = 2;
 let wavesAvailable = -1;
 createButton();
+createTimer();
 
 export const options = {
   dimensions: "scale-up",
@@ -85,7 +87,11 @@ export const Game = makeSprite({
       audioFileNames: ["boop.wav", "dbz-1.mp3", "naruto-kokuten.mp3"],
       imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png","game-over.PNG", "kamehameha.png"],
     }).then(() => {
-      updateState((state) => ({ ...state, loaded: true }));
+      if(enableStart) {
+        updateState((state) => ({...state, loaded: true}));
+      }else {
+        updateState((state) => ({...state, loaded: false}));
+      }
     });
     return initialState;
   },
@@ -110,6 +116,11 @@ export const Game = makeSprite({
         playerLifesCounter--;
       }
       player1.timer = 40;
+    }
+
+    if(document.getElementById("playerTimer").getAttribute("reset") == "true"){
+      player1.timer = 40;
+      document.getElementById("playerTimer").setAttribute("reset", "false")
     }
 
     player1.timer -= 1/60;
@@ -216,10 +227,11 @@ export const Game = makeSprite({
   },
 
   render({ device, state }) {
+    console.log(state.loaded)
     if (!state.loaded) {
       return [
         t.text({
-          text: "Loading...",
+          text: "WELCOME",
           color: "black",
         }),
       ];
@@ -388,6 +400,25 @@ function createButton(){
     location.reload();
   }
   document.body.appendChild(btn);
+
+  let startGame = document.createElement("button");
+  startGame.innerHTML = "Start";
+  startGame.style.background = 'red';
+  startGame.style.display = 'block';
+  startGame.style.color = 'white';
+  startGame.id = "startGame";
+  startGame.onclick = function () {
+    document.getElementById("startGame").style.display = 'none';
+    enableStart = true;
+  }
+  document.body.appendChild(startGame);
+}
+
+function createTimer(){
+  let playerTimer = document.createElement("playerTimer");
+  playerTimer.id = "playerTimer";
+  playerTimer.setAttribute("reset", "false");
+  document.body.appendChild(playerTimer);
 }
 
 function didWaveHitTarget(energyWaves, enemies, player1){
