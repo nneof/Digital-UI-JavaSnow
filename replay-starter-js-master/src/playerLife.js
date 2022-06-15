@@ -5,8 +5,8 @@ export const PlayerLife = makeSprite({
     return [
       t.image({
         fileName: "playerLife.png",
-        height: 40,
-        width: 40,
+        height: 30,
+        width: 30,
       }),
     ];
   },

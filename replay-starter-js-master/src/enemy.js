@@ -8,7 +8,7 @@ export const Enemy = makeSprite({
     return [
       t.image({
         testId: "icon",
-        fileName: "goku.png",
+        fileName: "frieza.png",
         width: enemyWidth,
         height: enemyHeight,
       }),

@@ -12,7 +12,7 @@ let audioPlayingCounter=0;
 let wavesCount = 0;
 let muted = false;
 let playerLifesCounter = 4;
-let difficulty = 0;
+let difficulty = 2;
 
 
 export const options = {
@@ -24,7 +24,7 @@ export const gameProps = {
   size: {
     landscape: {
       width: 850,
-      height: 350,
+      height: 340,
       maxWidthMargin: 150,
     },
     portrait: {
@@ -45,26 +45,26 @@ const initialState = {
   [
     {
       id: 1,
-      x: -350,
-      y: 0,
+      x: -395,
+      y: 70,
       lifeHit: false,
     },
     {
       id: 2,
-      x: -350,
-      y: -50,
+      x: -360,
+      y: 70,
       lifeHit: false,
     },
     {
       id: 3,
-      x: -350,
-      y: -100,
+      x: -325,
+      y: 70,
       lifeHit: false,
     },
     {
       id: 4,
-      x: -350,
-      y: -150,
+      x: -290,
+      y: 70,
       lifeHit: false,
     },
   ],
@@ -72,7 +72,8 @@ const initialState = {
     id: "Player1",
     x: -250,
     y: 0,
-    score: 0
+    score: 0,
+    timer: 40
   },
   isGameOver: false
 };
@@ -81,7 +82,7 @@ export const Game = makeSprite({
   init({ updateState, preloadFiles }) {
     preloadFiles({
       audioFileNames: ["boop.wav", "dbz-1.mp3", "naruto-kokuten.mp3"],
-      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png"],
+      imageFileNames: ["goku.png", "playerLife.png", "Namek.png", "playerLife.png", "frieza.png"],
     }).then(() => {
       updateState((state) => ({ ...state, loaded: true }));
     });
@@ -95,11 +96,22 @@ export const Game = makeSprite({
     let enemy,energyWave;
     const inputs  = getInputs();
     let { player1, enemies, playerLifes, energyWaves, isGameOver} = state;
-
     if (!state.loaded) return state;
     if (isGameOver) return;
 
     handleMusic(device,inputs);
+
+    if (Math.trunc(player1.timer) == 0) {
+      generateNewEquation();
+      cleanElements();
+      if(playerLifesCounter > 0){
+        playerLifes[playerLifesCounter-1].lifeHit = true;
+        playerLifesCounter--;
+      }
+      player1.timer = 40;
+    }
+
+    player1.timer -= 1/60;
 
     enemy = spawnEnemy(enemies);
     if (enemy != undefined)
@@ -144,7 +156,7 @@ export const Game = makeSprite({
       ),
     ];
     enemyHitWall(enemies, playerLifes);
-    didWaveHitTarget(energyWaves,enemies);
+    didWaveHitTarget(energyWaves,enemies, player1);
 
     if (inputs.keysJustPressed[" "]){
       device.audio("boop.wav").play();
@@ -218,6 +230,34 @@ export const Game = makeSprite({
         x: state.player1.x,
         y: state.player1.y,
       }),
+      t.text({
+        font: { name: "Calibri", size: 12 },
+        text: "Score:",
+        color: "#000000",
+        x: -device.size.width / 2 + 40,
+        y: device.size.height / 2 - 20,
+      }),
+      t.text({
+        font: { name: "Calibri", size: 12 },
+        text: state.player1.score,
+        color: "#000000",
+        x: -device.size.width / 2 + 40,
+        y: device.size.height / 2 - 40,
+      }),
+      t.text({
+        font: { name: "Calibri", size: 12 },
+        text: "Timer:",
+        color: "#000000",
+        x: -device.size.width / 2 + 150,
+        y: device.size.height / 2 - 20,
+      }),
+      t.text({
+        font: { name: "Calibri", size: 12 },
+        text: Math.trunc(state.player1.timer),
+        color: "#000000",
+        x: -device.size.width / 2 + 150,
+        y: device.size.height / 2 - 40,
+      }),
       ...state.playerLifes.map(({ x, y, id }) =>
         PlayerLife({ x, y, id: "life" + id })
       ),
@@ -241,14 +281,14 @@ function enemyHitWall(enemies, playerLifes){
   let i;
   for(i = 0; i < enemies.length; i++){
     if(difficulty === 2){
-      if(enemies[i].x === -222.5){
+      if(enemies[i].x === -211.5){
         enemies[i].enemyHitWall = true;
         if(playerLifesCounter > 0){
           playerLifes[playerLifesCounter-1].lifeHit = true;
           playerLifesCounter--;
         }
       }
-    }else if(enemies[i].x === -222){
+    }else if(enemies[i].x === -211){
       enemies[i].enemyHitWall = true;
       if(playerLifesCounter > 0){
         playerLifes[playerLifesCounter-1].lifeHit = true;
@@ -317,7 +357,7 @@ function handleMusic(device, inputs){
   }
 }
 
-function didWaveHitTarget(energyWaves, enemies){
+function didWaveHitTarget(energyWaves, enemies, player1){
   if(energyWaves.length > 0) {
     let energyX = energyWaves[0].x;
     let energyTop = energyWaves[0].y + energyHeight/2;
@@ -329,7 +369,8 @@ function didWaveHitTarget(energyWaves, enemies){
       if(energyX > enemies[i].x && ((energyBottom < enemyTop && energyBottom > enemyBottom-10 ) || (energyTop > enemyBottom && energyTop < enemyTop))){ //&& energyY > enemyBottom && energyY < enemyTop){
         energyWaves[0].targetHit = true;
         enemies[i].targetHit = true;
-        activateNumber(Math.trunc(Math.random() * 10));        
+        activateNumber(Math.trunc(Math.random() * 10));
+        player1.score++;        
       }
     }
   }
