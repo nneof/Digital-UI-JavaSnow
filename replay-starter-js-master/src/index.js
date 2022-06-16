@@ -308,7 +308,7 @@ export const Game = makeSprite({
                 }),
                 t.text({
                     font: {family: "Ravie", size: 16, style: "italic"},
-                    text: "If Frieza reach you, you lose a life.",
+                    text: "If Frieza reaches you, you lose a life.",
                     color: "black",
                     x: 0,
                     y: -70,
@@ -512,7 +512,7 @@ function createButton() {
     gameOver.style.position = "absolute";
     gameOver.style.color = 'black';
     gameOver.style.right = "0.5%";
-    gameOver.style.bottom = "15%";
+    gameOver.style.bottom = "19%";
     gameOver.style.padding = "15px 50px 15px 50px";
     gameOver.id = "gameOver";
     gameOver.onclick = function () {
