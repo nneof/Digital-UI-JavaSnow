@@ -98,6 +98,7 @@ export const Game = makeSprite({
   loop({ state, device, getInputs }) {
     if (document.getElementById("startGame").getAttribute("clicked") === "true") {
       state.loaded = true;
+      document.getElementById("interactionMenu").style.display = 'block'
     }
         if (!state.loaded) return state;
 
@@ -258,16 +259,72 @@ export const Game = makeSprite({
                 //     height: device.size.height
                 // }),
                 t.text({
-                    font: {name: "Calibri", size: 35},
+                    font: {family: "Ravie", size: 35, style: "bold"},
                     text: "WELCOME",
                     color: "black",
                     x: 0,
                     y: 130,
                     position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 20, style: "bold italic"},
+                    text: "Defeat Frieza while learning math!",
+                    color: "black",
+                    x: 0,
+                    y: 90,
+                    position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 16, style: "italic"},
+                    text: "Move up and down with '↑' and '↓'.",
+                    color: "black",
+                    x: 0,
+                    y: 50,
+                    position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 16, style: "italic"},
+                    text: "Use 'space' to fire kamehameha!",
+                    color: "black",
+                    x: 0,
+                    y: 20,
+                    position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 16, style: "italic"},
+                    text: "Shoot Frieza to obtain numbers.",
+                    color: "black",
+                    x: 0,
+                    y: -10,
+                    position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 16, style: "italic"},
+                    text: "Solve the equation before the timer runs out, or lose a life.",
+                    color: "black",
+                    x: 0,
+                    y: -40,
+                    position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 16, style: "italic"},
+                    text: "If Frieza reach you, you lose a life.",
+                    color: "black",
+                    x: 0,
+                    y: -70,
+                    position: "absolute"
+                }),
+                t.text({
+                    font: {family: "Ravie", size: 16, style: "italic"},
+                    text: "Too easy?? Press '1', '2' or '3' to increase the difficulty.",
+                    color: "black",
+                    x: 0,
+                    y: -100,
+                    position: "absolute"
                 })
             ];
         }
-        return [
+        return [ 
             t.image({
                 fileName: "Namek.png",
                 width: device.size.width,
